@@ -3,7 +3,7 @@
 {% block body %}
 
     <h1>Books</h1>
-    {% for book in books %}    
+    {% for book in books %}     
         <h2>{{ book[1] }}</h2>
         <form action="/cart" method="post">
             <input name="id" type="hidden" value="{{ book[0] }}">

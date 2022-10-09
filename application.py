@@ -8,6 +8,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 db = sqlite3.connect("database", check_same_thread=False)
+cursor = db.cursor()
 
 @app.route("/")
 def index():
@@ -16,6 +17,31 @@ def index():
 
 @app.route("/cart", methods=["GET", "POST"])
 def cart():
-    # books = db.execute("SELECT * FROM books")
-    # return render_template("books.html", books=books)
-    return null
+    # Ensure cart exists
+    if "cart" not in session:
+        session["cart"] = []
+    
+    # POST
+    if request.method == "POST":
+        id = request.form.get("id")
+        if id:
+            session["cart"].append(id)
+        return redirect("/cart")
+    
+    # GET
+    searches = "?" + (", ?") * (len(session["cart"]) - 1)
+    books = cursor.execute(f"SELECT * FROM books WHERE id IN ({searches})", session["cart"])
+    count = GetRepeats(session["cart"])
+    return render_template("cart.html", books=zip(books, count))
+
+def GetRepeats(arr):
+    r = {}
+    for l in arr:
+        if l in r:
+            r[l] += 1
+        else:
+            r[l] = 0
+
+    return list(r.values())
+
+
