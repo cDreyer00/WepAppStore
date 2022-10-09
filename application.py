@@ -34,13 +34,19 @@ def cart():
     count = GetRepeats(session["cart"])
     return render_template("cart.html", books=zip(books, count))
 
+@app.route("/clear")
+def clear():
+    session["cart"] = []
+    return redirect("/")
+
+
 def GetRepeats(arr):
     r = {}
     for l in arr:
         if l in r:
             r[l] += 1
         else:
-            r[l] = 0
+            r[l] = 1
 
     return list(r.values())
 
