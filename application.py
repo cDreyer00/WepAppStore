@@ -7,8 +7,15 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-db = sqlite3.connect("database")
+db = sqlite3.connect("database", check_same_thread=False)
 
 @app.route("/")
 def index():
-    return "PAGE"
+    books = db.execute("SELECT * FROM books")
+    return render_template("books.html", books=books)
+
+@app.route("/cart", methods=["GET", "POST"])
+def cart():
+    # books = db.execute("SELECT * FROM books")
+    # return render_template("books.html", books=books)
+    return null
